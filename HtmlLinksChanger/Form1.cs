@@ -16,5 +16,27 @@ namespace HtmlLinksChanger
         {
             InitializeComponent();
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (!textBox1.Text.Trim().Equals(string.Empty) &&
+                !textBox3.Text.Trim().Equals(string.Empty))
+            {
+
+            }
+
+            else
+            {
+                MessageBox.Show("Fill-out all fields first.");
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog().Equals(DialogResult.OK))
+            {
+                textBox1.Text = openFileDialog1.FileName;
+            }
+        }
     }
 }
