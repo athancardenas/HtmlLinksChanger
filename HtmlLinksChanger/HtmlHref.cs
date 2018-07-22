@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,14 +22,8 @@ namespace HtmlLinksChanger
             _HrefQuotes = new List<char>();
             _BeforeQuotesHrefs = new List<string>();
 
-            AddBeforeQuotesHrefs(new string[] {
-                "href="
-            });
-
-            _HrefQuotes.AddRange(new char[] {
-                '\''
-                , '"'
-            });
+            AddBeforeQuotesHrefs(Properties.Resources.BeforeQuotesHref.Split(','));
+            _HrefQuotes.AddRange(Properties.Resources.HrefQuotes.ToCharArray());
 
             _HrefSubstringToReplace = hrefSubstringToReplace;
             _HrefSubstringReplacement = hrefSubstringReplacement;

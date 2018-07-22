@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
@@ -31,6 +32,7 @@ namespace HtmlLinksChanger
                     string resultFolder = @"result\";
                     string resultFolderPath = Path.GetDirectoryName(htmlFileSource.FilePath) + @"\" + resultFolder;
                     string resultFilePath = resultFolderPath + Path.GetFileName(htmlFileSource.FilePath);
+                    string message = string.Empty;
 
                     if (!Directory.Exists(resultFolderPath))
                     {
@@ -42,12 +44,25 @@ namespace HtmlLinksChanger
                         File.Delete(resultFilePath);
                     }
 
-                    using (StreamWriter sw = new StreamWriter(resultFilePath))
+                    try
                     {
-                        resultFileLines.ForEach(l => {
-                            sw.WriteLine(l);
-                        });
+                        using (StreamWriter sw = new StreamWriter(resultFilePath))
+                        {
+                            resultFileLines.ForEach(l =>
+                            {
+                                sw.WriteLine(l);
+                            });
+                        }
+
+                        message = "Successfully created file with changed links.";
                     }
+
+                    catch (Exception)
+                    {
+                        message = "Error.";
+                    }
+
+                    MessageBox.Show(message);
                 }
             }
 
@@ -67,6 +82,18 @@ namespace HtmlLinksChanger
 
         private void button3_Click(object sender, EventArgs e)
         {
+            try
+            {
+                if (Directory.Exists(Path.GetDirectoryName(textBox1.Text.Trim()) + @"\result\"))
+                {
+                    Process.Start("explorer.exe", Path.GetDirectoryName(textBox1.Text.Trim()) + @"\result\");
+                }
+            }
+
+            catch (Exception)
+            {
+                MessageBox.Show("Not found.");
+            }
 
         }
 
