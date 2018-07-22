@@ -9,24 +9,20 @@ namespace HtmlLinksChanger
 {
     public class HtmlHref
     {
-        private static List<char> _HrefQuotes { get; set; }
-        private static string _HrefSubstringToReplace { get; set; }
-        private static string _HrefSubstringReplacement { get; set; }
-
         private List<string> _BeforeQuotesHrefs { get; set; }
+        private List<char> _HrefQuotes { get; set; }
+        private string _HrefSubstringToReplace { get; set; }
+        private string _HrefSubstringReplacement { get; set; }
 
         public string HrefString { get; set; }
 
-        public HtmlHref(string hrefSubstringToReplace, string hrefSubstringReplacement)
+        public HtmlHref(string[] beforeQuotesHref, char[] hrefQuotes)
         {
             _HrefQuotes = new List<char>();
             _BeforeQuotesHrefs = new List<string>();
 
-            AddBeforeQuotesHrefs(Properties.Resources.BeforeQuotesHref.Split(','));
-            _HrefQuotes.AddRange(Properties.Resources.HrefQuotes.ToCharArray());
-
-            _HrefSubstringToReplace = hrefSubstringToReplace;
-            _HrefSubstringReplacement = hrefSubstringReplacement;
+            AddBeforeQuotesHrefs(beforeQuotesHref);
+            AddHrefQuotes(hrefQuotes);
         }
 
         public void AddBeforeQuotesHrefs(string[] additionalBeforeQuotesHrefs)
@@ -34,23 +30,32 @@ namespace HtmlLinksChanger
             _BeforeQuotesHrefs.AddRange(additionalBeforeQuotesHrefs);
         }
 
-        public string ReplaceHrefString(string lineForReplacement)
+        public void AddHrefQuotes(char[] additionalHrefQuotes)
         {
-            _BeforeQuotesHrefs.ForEach(h =>
-            {
-                _HrefQuotes.ForEach(q =>
-                {
-                    string substringToReplace = h + q + _HrefSubstringToReplace;
+            _HrefQuotes.AddRange(additionalHrefQuotes);
+        }
 
-                    if (lineForReplacement.Contains(substringToReplace))
-                    {
-                        string substringReplacement = h + q + _HrefSubstringReplacement;
-                        lineForReplacement = lineForReplacement.Replace(substringToReplace, substringReplacement);
-                    }
+        public List<string> ReplaceHrefStrings(List<string> linesForReplacement, string hrefSubstringToReplace, string hrefSubstringReplacement)
+        {
+            List<string> resultFileLines = new List<string>();
+
+            linesForReplacement.ForEach(l => {
+                _BeforeQuotesHrefs.ForEach(h => {
+                    _HrefQuotes.ForEach(q => {
+                        string substringToReplace = h + q + hrefSubstringToReplace;
+
+                        if (l.Contains(substringToReplace))
+                        {
+                            string substringReplacement = h + q + hrefSubstringReplacement;
+                            l = l.Replace(substringToReplace, substringReplacement);
+                        }
+                    });
                 });
+
+                resultFileLines.Add(l);
             });
 
-            return lineForReplacement;
+            return resultFileLines;
         }
     }
 }

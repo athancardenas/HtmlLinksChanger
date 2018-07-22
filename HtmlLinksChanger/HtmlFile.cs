@@ -30,5 +30,48 @@ namespace HtmlLinksChanger
                 }
             }
         }
+
+        public string CreateResultFile()
+        {
+            string resultMessage = string.Empty;
+
+            if (HtmlFileLines.Count > 0)
+            {
+                string resultFolder = @"result\";
+                string resultFolderPath = Path.GetDirectoryName(FilePath) + @"\" + resultFolder;
+                string resultFilePath = resultFolderPath + Path.GetFileName(FilePath);
+                string message = string.Empty;
+
+                if (!Directory.Exists(resultFolderPath))
+                {
+                    Directory.CreateDirectory(resultFolderPath);
+                }
+
+                if (File.Exists(resultFilePath))
+                {
+                    File.Delete(resultFilePath);
+                }
+
+                try
+                {
+                    using (StreamWriter sw = new StreamWriter(resultFilePath))
+                    {
+                        HtmlFileLines.ForEach(l =>
+                        {
+                            sw.WriteLine(l);
+                        });
+                    }
+
+                    resultMessage = "Successfully created file.";
+                }
+
+                catch (Exception)
+                {
+                    resultMessage = "Error.";
+                }
+            }
+
+            return resultMessage;
+        }
     }
 }

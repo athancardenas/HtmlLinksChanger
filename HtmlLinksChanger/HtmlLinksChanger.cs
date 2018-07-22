@@ -15,60 +15,27 @@ namespace HtmlLinksChanger
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (!textBox1.Text.Trim().Equals(string.Empty) &&
-                !textBox3.Text.Trim().Equals(string.Empty))
+            if (!textBox1.Text.Trim().Equals(string.Empty))
             {
-                HtmlFile htmlFileSource = new HtmlFile(textBox1.Text);
-                HtmlHref htmlHref = new HtmlHref(textBox2.Text, textBox3.Text);
+                string filePathSource = textBox1.Text.Trim();
 
-                List<string> resultFileLines = new List<string>();
+                string[] beforeQuotesHref = Properties.Resources.BeforeQuotesHref.Split(',');
+                char[] hrefQuotes = Properties.Resources.HrefQuotes.ToCharArray();
 
-                htmlFileSource.HtmlFileLines.ForEach(l => {
-                    resultFileLines.Add(htmlHref.ReplaceHrefString(l));
-                });
+                string hrefSubstringToReplace = textBox2.Text.Trim();
+                string hrefSubstringReplacement = textBox3.Text.Trim();
 
-                if (resultFileLines.Count > 0)
-                {
-                    string resultFolder = @"result\";
-                    string resultFolderPath = Path.GetDirectoryName(htmlFileSource.FilePath) + @"\" + resultFolder;
-                    string resultFilePath = resultFolderPath + Path.GetFileName(htmlFileSource.FilePath);
-                    string message = string.Empty;
+                HtmlFile htmlFileSource = new HtmlFile(filePathSource);
+                HtmlHref htmlHref = new HtmlHref(beforeQuotesHref, hrefQuotes);
 
-                    if (!Directory.Exists(resultFolderPath))
-                    {
-                        Directory.CreateDirectory(resultFolderPath);
-                    }
+                htmlFileSource.HtmlFileLines = htmlHref.ReplaceHrefStrings(htmlFileSource.HtmlFileLines, hrefSubstringToReplace, hrefSubstringReplacement);
 
-                    if (File.Exists(resultFilePath))
-                    {
-                        File.Delete(resultFilePath);
-                    }
-
-                    try
-                    {
-                        using (StreamWriter sw = new StreamWriter(resultFilePath))
-                        {
-                            resultFileLines.ForEach(l =>
-                            {
-                                sw.WriteLine(l);
-                            });
-                        }
-
-                        message = "Successfully created file with changed links.";
-                    }
-
-                    catch (Exception)
-                    {
-                        message = "Error.";
-                    }
-
-                    MessageBox.Show(message);
-                }
+                MessageBox.Show(htmlFileSource.CreateResultFile());
             }
 
             else
             {
-                MessageBox.Show("Make sure to fill-out file to change and string replacement fields.");
+                MessageBox.Show("Please select a valid file.");
             }
         }
 
@@ -94,17 +61,6 @@ namespace HtmlLinksChanger
             {
                 MessageBox.Show("Not found.");
             }
-
-        }
-
-        private void _CreateResultFolder()
-        {
-
-        }
-
-        private void _SelectResultFileInExplorer()
-        {
-
         }
     }
 }
